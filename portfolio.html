@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Portfolio - Interactive & Modern</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark: #1f2937;
+            --light: #f9fafb;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        
+        body.dark-mode {
+            background-color: #1f2937;
+            color: #f9fafb;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .skill-bar {
+            transition: width 1.5s ease-out;
+            transform-origin: left;
+        }
+        
+        .skill-bar.animate {
+            animation: fillBar 1.5s ease-out forwards;
+        }
+        
+        @keyframes fillBar {
+            from { width: 0%; }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #6366f1;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #6366f1; }
+        }
+        
+        .nav-active {
+            color: #6366f1;
+            position: relative;
+        }
+        
+        .nav-active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #6366f1;
+            animation: underline 0.3s ease-out;
+        }
+        
+        @keyframes underline {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        .project-modal {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .project-modal.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: particleFloat 6s ease-in-out infinite;
+        }
+        
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10%, 90% { opacity: 1; }
+            50% { transform: translateY(-100px) rotate(180deg); }
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #6366f1, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-sm shadow-lg z-40 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold text-gradient">Portfolio</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-item hover:text-indigo-600 transition-colors">Home</a>
+                    <a href="#about" class="nav-item hover:text-indigo-600 transition-colors">About</a>
+                    <a href="#skills" class="nav-item hover:text-indigo-600 transition-colors">Skills</a>
+                    <a href="#projects" class="nav-item hover:text-indigo-600 transition-colors">Projects</a>
+                    <a href="#contact" class="nav-item hover:text-indigo-600 transition-colors">Contact</a>
+                </div>
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen hero-gradient flex items-center justify-center relative overflow-hidden">
+        <!-- Animated Particles -->
+        <div id="particles" class="absolute inset-0"></div>
+        
+        <div class="container mx-auto px-6 text-center text-white z-10">
+            <div class="floating mb-8">
+                <img src="images\E480.jpg" alt="Professional headshot of a developer smiling with modern office background" class="w-32 h-32 mx-auto rounded-full border-4 border-white/20 shadow-2xl">
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">Hi, I'm <span class="text-gradient bg-white px-2 rounded">Rethika M</span></h1>
+            <p class="text-xl md:text-2xl mb-8 typewriter">Full Stack Developer & UI/UX Enthusiast</p>
+            <div class="flex justify-center space-x-6">
+                <button class="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold shadow-lg hover:scale-110 transition-transform glow">
+                    View My Work
+                </button>
+               <a href="Rethika.M_Resume_25.pdf" download class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-indigo-600 transition-all inline-block text-center">
+  Download CV
+</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gradient fade-in">About Me</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c56a68cc-66cc-43af-ad08-22523eac237d.png" alt="Developer working on laptop in modern workspace with coffee and plants" class="rounded-2xl shadow-xl card-hover">
+                </div>
+                <div class="fade-in">
+                    <h3 class="text-2xl font-semibold mb-6">Full-Stack Developer Building Seamless Web Solutions</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                        I’m a passionate full-stack developer with hands-on experience in React, Next.js, and NestJS. I specialize in crafting dynamic and efficient web applications, combining strong problem-solving skills with a focus on user-friendly design and robust backend solutions.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-indigo-600 rounded-full mr-3"></div>
+                            <span>React.js</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-indigo-600 rounded-full mr-3"></div>
+                            <span>Node.js</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-indigo-600 rounded-full mr-3"></div>
+                            <span>MongoDB</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-indigo-600 rounded-full mr-3"></div>
+                            <span>Python</span>
+                        </div>
+                    </div>
+                    <button class="bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
+                        Let's Connect
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gradient fade-in">My Skills</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Technical Skills -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg card-hover fade-in">
+                    <h3 class="text-2xl font-semibold mb-6 text-center">Technical Skills</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>React.js</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-indigo-600 h-3 rounded-full" style="width: 0%" data-width="95%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>Node.js</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-indigo-600 h-3 rounded-full" style="width: 0%" data-width="90%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>JavaScript</span>
+                                <span>98%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-indigo-600 h-3 rounded-full" style="width: 0%" data-width="98%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Skills -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg card-hover fade-in">
+                    <h3 class="text-2xl font-semibold mb-6 text-center">Soft Skills</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>Problem Solving</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-green-600 h-3 rounded-full" style="width: 0%" data-width="92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>Teamwork</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-green-600 h-3 rounded-full" style="width: 0%" data-width="88%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>Communication</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="skill-bar bg-green-600 h-3 rounded-full" style="width: 0%" data-width="85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gradient fade-in">Featured Projects</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg card-hover fade-in">
+                    <div class="relative">
+                        <img src="images\Chat.jpeg" alt="https://github.com/Rethika1916" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm">
+                            NLP
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-3">ChatBotSystem</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            NLP Chatbot System – Built an intelligent chatbot using Natural Language Processing to understand user queries, extract intent, and generate meaningful responses. Designed for real-time interaction with features like intent recognition, entity extraction, and API integration.
+                        </p>
+                        <div class="flex space-x-4">
+                            <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-3 py-1 rounded-full text-sm">
+                                NLP
+                            </span>
+                            <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-3 py-1 rounded-full text-sm">
+                                MachineLearning Modles
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg card-hover fade-in">
+                    <div class="relative">
+                        <img src="images\price.jpeg" alt="Price Prediction using Machine Learning" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+                            MachineLearning
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-3">Price Prediction using Machine Learning</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            This project is a Machine Learning model for predicting prices based on historical and feature-based data. It demonstrates end-to-end ML workflow including data preprocessing, model training, evaluation, and prediction
+                        </p>
+                        <div class="flex space-x-4">
+                            <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 px-3 py-1 rounded-full text-sm">
+                                end-end ML
+                            </span>
+                            <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 px-3 py-1 rounded-full text-sm">
+                                MachineLearning
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg card-hover fade-in">
+                    <div class="relative">
+                        <img src="images\women.jpeg" alt="Women Safety System using AI/ML and Hand Gestures" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            Python
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-3">Women Safety System using AI/ML and Hand Gestures</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                           Uses gesture recognition and machine learning to protect users in danger without requiring verbal input.
+                        </p>
+                        <div class="flex space-x-4">
+                            <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-sm">
+                                Python
+                            </span>
+                            <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-sm">
+                                AI
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gradient fade-in">Get In Touch</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="fade-in">
+                    <h3 class="text-2xl font-semibold mb-6">Let's Work Together</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                        I'm always interested in new opportunities and interesting projects. 
+                        Whether you have a question or just want to say hi, feel free to reach out!
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white mr-4">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Email</p>
+                                <p class="text-gray-600 dark:text-gray-300">reyamano555@gmail.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white mr-4">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Phone</p>
+                                <p class="text-gray-600 dark:text-gray-300">9841663228</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg fade-in">
+                    <form id="contactForm" class="space-y-6">
+                        <div>
+                            <input type="text" placeholder="Your Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                        </div>
+                        <div>
+                            <input type="email" placeholder="Your Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                        </div>
+                        <div>
+                            <textarea placeholder="Your Message" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="#" class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            <p>© 2025 Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        });
+
+        // Navigation Active State
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('section');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('nav-active');
+                if (item.getAttribute('href').substring(1) === current) {
+                    item.classList.add('nav-active');
+                }
+            });
+        });
+
+        // Smooth Scrolling
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = item.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                window.scrollTo({
+                    top: targetSection.offsetTop,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animated Skill Bars
+        const skillBars = document.querySelectorAll('.skill-bar');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const skillBar = entry.target;
+                    const width = skillBar.getAttribute('data-width');
+                    skillBar.style.width = width;
+                    skillBar.classList.add('animate');
+                    
+                    // Animate fade-in elements
+                    const fadeElements = document.querySelectorAll('.fade-in');
+                    fadeElements.forEach(el => {
+                        if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+                            el.classList.add('visible');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        skillBars.forEach(bar => observer.observe(bar));
+
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 10 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Form validation
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inputs = contactForm.querySelectorAll('input, textarea');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('shake');
+                    setTimeout(() => input.classList.remove('shake'), 500);
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                alert('Message sent successfully!');
+                contactForm.reset();
+            }
+        });
+
+        // Animate elements on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeElements.forEach(el => fadeObserver.observe(el));
+
+        // Hover effects for cards
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
